@@ -12,7 +12,6 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSnapHelper
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.*
@@ -44,16 +43,8 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
     private var mRestartButton: Button? = null
     private var mLessonFocusRadGroup: RadioGroup? = null
     private var mProgressBar: ProgressBar? = null
-    /**
-     * True to use Kana (Lessons 1 and 2).  False to use Kanji (Lessons 3 to 23).
-     */
-    private var mUsingKana = true
-    // TODO: Make these two booleans enums?
-    /**
-     * True to show meaning.  False to show reading.
-     */
-    private var mShowingMeaning = true
     private var mLessonNumber = FIRST_LESSON
+    private var mLessonType = LessonType.KANA
     private var mOrientation = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,10 +104,15 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
 
         mLessonFocusRadGroup = view?.findViewById(R.id.rg_lesson_focus)
         val meaning: RadioButton? = view?.findViewById(R.id.rb_meaning)
-        toggleMeaningRadioButtons(!mUsingKana)
+        toggleMeaningRadioButtons(mLessonType != LessonType.KANA)
         mLessonFocusRadGroup?.setOnCheckedChangeListener { _, _ ->
-            mShowingMeaning = (mLessonFocusRadGroup?.checkedRadioButtonId == meaning?.id)
-            toggleMeaning(mShowingMeaning)
+            mLessonType =
+                    if (mLessonFocusRadGroup?.checkedRadioButtonId == meaning?.id) {
+                        LessonType.KANJI_MEANING
+                    } else {
+                        LessonType.KANJI_READING
+                    }
+            toggleRadioButtonText()
         }
 
         mProgressBar = view?.findViewById(R.id.pb_question_progress)
@@ -275,13 +271,11 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
     }
 
     /**
-     * Iterates through the board and toggles display of the meaning/reading text.
-     *
-     * @param toggle If true, display the meaning text.  False to show reading.
+     * Iterates through the quiz and toggles display of the meaning/reading text.
      */
-    private fun toggleMeaning(toggle: Boolean) {
+    private fun toggleRadioButtonText() {
         for (item in mViewHolders) {
-            item.toggleAllMeaningReading(toggle)
+            item.toggleAllRadioButtonText()
         }
     }
 
@@ -313,10 +307,14 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
         mLessonNumber = Integer.parseInt(preferences
                 .getString(getString(R.string.pref_lesson_key),
                         getString(R.string.pref_lesson_default)))
-        mUsingKana = mLessonNumber == 1 || mLessonNumber == 2
-        mShowingMeaning = preferences
-                .getBoolean(getString(R.string.pref_meaning_key),
-                        resources.getBoolean(R.bool.pref_showing_meaning_default))
+        mLessonType =
+                if (mLessonNumber == 1 || mLessonNumber == 2) {
+                    LessonType.KANA
+                } else if (mLessonNumber in 3..23) {
+                    LessonType.KANJI_MEANING
+                } else {
+                    throw IllegalStateException("Lesson key must be in [1..23]")
+                }
         mOrientation = preferences
                 .getString(getString(R.string.pref_orientation_key),
                         getString(R.string.pref_orientation_default))
@@ -346,23 +344,16 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
                 mLessonNumber = Integer.parseInt(sharedPrefs
                         .getString(getString(R.string.pref_lesson_key),
                                 getString(R.string.pref_lesson_default)))
-                mUsingKana = if (mLessonNumber == 1 || mLessonNumber == 2) {
-                    true
-                } else if (mLessonNumber in 3..23) {
-                    false
-                } else {
-                    throw IllegalStateException("Lesson key must be in [1..23]")
-                }
+                mLessonType =
+                        if (mLessonNumber == 1 || mLessonNumber == 2) {
+                            LessonType.KANA
+                        } else if (mLessonNumber in 3..23) {
+                            LessonType.KANJI_MEANING
+                        } else {
+                            throw IllegalStateException("Lesson key must be in [1..23]")
+                        }
                 updateItems()
-                toggleMeaningRadioButtons(!mUsingKana)
-            }
-            getString(R.string.pref_meaning_key) -> {
-                mShowingMeaning = sharedPrefs.getBoolean(
-                        getString(R.string.pref_meaning_key),
-                        resources.getBoolean(R.bool.pref_showing_meaning_default)
-                )
-                toggleMeaning(mShowingMeaning)
-//                setupAdapter()
+                toggleMeaningRadioButtons(mLessonType != LessonType.KANA)
             }
             getString(R.string.pref_orientation_key) -> {
                 mOrientation = sharedPrefs.getString(
@@ -389,10 +380,10 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
 
         fun bindQuestion(question: Question, position: Int) {
             mQuestion = question
-            mTvCharacter?.text = if (mUsingKana) {
-                mQuestion?.mCorrectCard?.kana // Lessons 1 and 2
-            } else {
-                mQuestion?.mCorrectCard?.character // Lessons 3 to 23
+            mTvCharacter?.text = if (mLessonType == LessonType.KANA) { // Lessons 1 and 2
+                mQuestion?.mCorrectCard?.kana
+            } else { // Lessons 3 to 23
+                mQuestion?.mCorrectCard?.character
             }
             mQuestionRadGroup = mItemView.findViewById(R.id.rg_question_choices)
             while (mRadButtons.size < NUM_MULTI_CHOICE) {
@@ -400,11 +391,11 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
                 radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, resources
                         .getInteger(R.integer.question_choice_font_size).toFloat())
 
-                if (mUsingKana) { // Lessons 1 and 2
+                if (mLessonType == LessonType.KANA) { // Lessons 1 and 2
                     radioButton.text =
                             mQuestion?.mShuffledCards?.get(mRadButtons.size)?.pronunciation
                 } else { // Lessons 3 to 23
-                    toggleSingleMeaningReading(radioButton, mRadButtons.size)
+                    toggleSingleRadioButtonText(radioButton, mRadButtons.size)
                 }
                 mRadButtons.add(radioButton)
                 radioButton.id = View.generateViewId()
@@ -429,8 +420,8 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
          * @param rb The RadioButton to update text.
          * @param index The index into mShuffledCards.
          */
-        fun toggleSingleMeaningReading(rb: RadioButton, index: Int) {
-            rb.text = if (mShowingMeaning) {
+        fun toggleSingleRadioButtonText(rb: RadioButton, index: Int) {
+            rb.text = if (mLessonType == LessonType.KANJI_MEANING) {
                 mQuestion?.mShuffledCards?.get(index)?.meaning
             } else {
                 mQuestion?.mShuffledCards?.get(index)?.onYomi +
@@ -442,13 +433,10 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
         /**
          * Iterates through all the RadioButtons in this ViewHolder to toggle
          * showing the meaning or reading.
-         *
-         * @param toggle True to show meaning, false to show reading.
          */
-        fun toggleAllMeaningReading(toggle: Boolean) {
-            mShowingMeaning = toggle
+        fun toggleAllRadioButtonText() {
             for (i in mRadButtons.indices) {
-                toggleSingleMeaningReading(mRadButtons[i], i)
+                toggleSingleRadioButtonText(mRadButtons[i], i)
             }
         }
 
@@ -473,7 +461,7 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
             return if (mQuestion?.mCorrectCard?.kana != null) {
                 mQuestion?.mCorrectCard?.pronunciation.toString()
             } else {
-                if (mShowingMeaning) {
+                if (mLessonType == LessonType.KANJI_MEANING) {
                     mQuestion?.mCorrectCard?.meaning.toString()
                 } else {
                     mQuestion?.mCorrectCard?.onYomi +

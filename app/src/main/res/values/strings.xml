@@ -11,7 +11,10 @@
     <string name="no_user_answer" translatable="false">no_user_answer</string>
 
     <!-- Strings related to UserPreferences -->
-    <string name="pref_meaning_key" translatable="false">showing_meaning_key</string>
+    <string name="pref_lesson_type_key" translatable="false">lesson_type_key</string>
+    <string name="pref_lesson_type_kana" translatable="false">lesson_kana</string>
+    <string name="pref_lesson_type_meaning" translatable="false">lesson_meaning</string>
+    <string name="pref_lesson_type_reading" translatable="false">lesson_reading</string>
     <string name="question_meaning">Meaning</string>
     <string name="question_reading">Reading</string>
 
