@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- Taken from browser version CSS file -->
+    <color name="navigation_bt_text">@android:color/white</color>
+    <color name="next_and_prev_bt_main">#64C896</color>
+    <color name="next_and_prev_bt_disabled">#4D64C896</color>
+    <color name="next_and_prev_bt_border">#329664</color>
+    <color name="next_and_prev_bt_border_disabled">#4D329664</color>
+    <color name="next_and_prev_bt_pressed">@color/next_and_prev_bt_border</color>
+    <color name="finish_bt_main">#4682B4</color>
+    <color name="finish_bt_disabled">#4D4682B4</color>
+    <color name="finish_bt_border">#38678F</color>
+    <color name="finish_bt_border_disabled">#4D38678F</color>
+    <color name="finish_bt_pressed">@color/finish_bt_border</color>
+    <color name="slide_main">#C85064</color>
+    <color name="slide_border">#961E32</color>
+    <color name="progress_main">@color/finish_bt_main</color>
+    <color name="progress_border">@color/finish_bt_border</color>
+    <color name="background">#F5F5DC</color>
+</resources>
