@@ -1,12 +1,10 @@
-package com.example.android.genkishiken;
+package net.nathanhenninger.android.genkishiken;
 
 /**
  * Created by Nathan Henninger on 2017.07.19.
  * https://github.com/nhenninger
  * nathanhenninger@u.boisestate.edu
  */
-
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

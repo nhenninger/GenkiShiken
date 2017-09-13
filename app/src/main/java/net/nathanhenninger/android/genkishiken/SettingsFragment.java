@@ -1,4 +1,4 @@
-package com.example.android.genkishiken;
+package net.nathanhenninger.android.genkishiken;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,7 +8,6 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
-import android.widget.Toast;
 
 /**
  * Created by Nathan Henninger on 2017.05.01.
