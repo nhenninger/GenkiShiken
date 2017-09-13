@@ -24,7 +24,7 @@ import java.util.*
  */
 class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
-        private const val TAG = "GenkiShikenFragment"
+//        private const val TAG = "GenkiShikenFragment"
         private const val FIRST_LESSON = 1
         private const val NUM_MULTI_CHOICE = 5
         private const val NUM_WRONG_CHOICES = NUM_MULTI_CHOICE - 1
