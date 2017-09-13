@@ -1,4 +1,4 @@
-package com.nathanhenninger.android.genkishiken;
+package net.nathanhenninger.android.genkishiken;
 
 import org.junit.Test;
 

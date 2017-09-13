@@ -1,4 +1,4 @@
-package com.nathanhenninger.android.genkishiken;
+package net.nathanhenninger.android.genkishiken;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.android.net.nathanhenninger.android.genkishiken", appContext.getPackageName());
+        assertEquals("net.nathanhenninger.android.genkishiken", appContext.getPackageName());
     }
 }

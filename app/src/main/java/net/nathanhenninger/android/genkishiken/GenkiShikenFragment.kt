@@ -220,11 +220,9 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
      *
      * @return score The number of correct user responses.
      */
-    private fun finalScore(): Int {
-        return mViewHolders.indices.count {
-            mViewHolders[it].getUserAnswer() ==
-                    mViewHolders[it].getCorrectAnswer()
-        }
+    private fun finalScore(): Int = mViewHolders.indices.count {
+        mViewHolders[it].getUserAnswer() ==
+                mViewHolders[it].getCorrectAnswer()
     }
 
     /**
@@ -244,9 +242,7 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
     /**
      * Convenience method for Collections.shuffle on private data set.
      */
-    private fun shuffleQuestions() {
-        Collections.shuffle(mQuestions)
-    }
+    private fun shuffleQuestions() = Collections.shuffle(mQuestions)
 
     /**
      * Enables or disables the Next, Prev, and Finish buttons.
@@ -457,17 +453,15 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
          *
          * @return The text of the answer for this ViewHolder's Question.
          */
-        fun getCorrectAnswer(): String {
-            return if (mQuestion?.mCorrectCard?.kana != null) {
-                mQuestion?.mCorrectCard?.pronunciation.toString()
+        fun getCorrectAnswer(): String = if (mQuestion?.mCorrectCard?.kana != null) {
+            mQuestion?.mCorrectCard?.pronunciation.toString()
+        } else {
+            if (mLessonType == LessonType.KANJI_MEANING) {
+                mQuestion?.mCorrectCard?.meaning.toString()
             } else {
-                if (mLessonType == LessonType.KANJI_MEANING) {
-                    mQuestion?.mCorrectCard?.meaning.toString()
-                } else {
-                    mQuestion?.mCorrectCard?.onYomi +
-                            " / " +
-                            mQuestion?.mCorrectCard?.kunYomi
-                }
+                mQuestion?.mCorrectCard?.onYomi +
+                        " / " +
+                        mQuestion?.mCorrectCard?.kunYomi
             }
         }
     }
@@ -484,9 +478,8 @@ class GenkiShikenFragment : Fragment(), SharedPreferences.OnSharedPreferenceChan
             return QuestionViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
-            holder.bindQuestion(mAdapterQuestions[position], position)
-        }
+        override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) =
+                holder.bindQuestion(mAdapterQuestions[position], position)
 
         override fun getItemCount(): Int = mAdapterQuestions.size
     }

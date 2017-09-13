@@ -9,5 +9,4 @@ import java.io.Serializable
  */
 data class Question(val mCorrectCard: Card,
                     val mIncorrectCards: ArrayList<Card>,
-                    val mShuffledCards: ArrayList<Card>) : Serializable {
-}
+                    val mShuffledCards: ArrayList<Card>) : Serializable

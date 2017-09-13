@@ -21,5 +21,5 @@ enum class LessonType(private val mResId: Int) {
         }
     }
 
-    fun asString(context: Context) = context.getString(mResId)
+    fun asString(context: Context): String = context.getString(mResId)
 }
